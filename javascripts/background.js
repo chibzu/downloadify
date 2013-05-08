@@ -1,10 +1,12 @@
 var downloads = [];
+var active = true;
 
 var downloadSong = function(url, tabid){
   if( chrome.webRequest.onBeforeRequest.hasListeners() )
       chrome.webRequest.onBeforeRequest.removeListener(findmp3);
 
-  chrome.tabs.sendMessage( tabid , {action: "getSong", url : url} );
+	  if (active)
+		chrome.tabs.sendMessage( tabid , {action: "getSong", url : url} );
   
   setTimeout(function(){ startListener(); },500)
 }
@@ -23,3 +25,12 @@ var startListener = function(){
   );
 };
 startListener();
+
+chrome.browserAction.onClicked.addListener(function(tab){
+	if (active)
+		chrome.browserAction.setIcon({path: "icon_48_gray.png"});
+	else
+		chrome.browserAction.setIcon({path: "icon_48.png"});
+		
+	active = !active;
+});
